@@ -1,4 +1,7 @@
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, from, of, asyncScheduler, interval, timer } from 'rxjs';
+import { map, reduce, filter } from 'rxjs/operators';
+
+const lineaSepardora = "-".repeat(5);
 
 const observableAlfa$ = new Observable( subscriber => {
     subscriber.next(1);
@@ -58,3 +61,55 @@ numbers$.subscribe(numbersSubject$);
 
 //nota se pueden seguir emitendo valores a los observadores
 numbersSubject$.next(80);
+
+
+//From
+const fruits$ = from(['Manzana', 'Banano', 'Pera']);
+
+fruits$.subscribe(console.log);
+
+
+//of
+const fruits2$ = of(['Manzana', 'Banano', 'Pera']);
+
+fruits2$.subscribe(console.log);
+
+//asyncScheduler
+const fruits3$ = from(['Manzana', 'Banano', 'Pera'], asyncScheduler);
+
+fruits$.subscribe(console.log);
+
+
+//Interval
+//parame en milisegundos
+const secuenceNumbers$ = interval(2000);
+//secuenceNumbers$.subscribe(console.log);
+
+//Timer
+//Parametro en milisegundos, ese el tiempo que esperará para ejecutarse
+const delayedTimer$ = timer(5000);
+delayedTimer$.subscribe(console.log)
+
+console.log(lineaSepardora + "Operadores pipeables" + lineaSepardora);
+console.log(lineaSepardora + "Map - Filter" + lineaSepardora);
+//Map
+//Muta los itmes dentro del arreglo -> devuelve un nuevo arreglo
+//Filter
+//Reduce el arreglo segun la condición que se le ponga
+const numbers2$ = from([1 , 2, 3, 4 , 5, 6, 7 ,8]).pipe(
+    map(number => number * 2),
+    filter(number => number > 10)
+);
+numbers2$.subscribe(console.log);
+
+console.log(lineaSepardora + "Reduce" + lineaSepardora);
+//Reduce
+//Acumula y ddevuleve la suma de los items (la variable acc: es el acumulador empieza en 0 por defecto)
+const numbers3$ = from([1 , 2, 3, 4 , 5, 6, 7 ,8]).pipe(
+    reduce((acc, number) => acc + number)
+);
+numbers3$.subscribe(console.log);
+
+
+
+
