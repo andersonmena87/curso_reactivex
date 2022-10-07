@@ -1,5 +1,5 @@
-import { Observable, Subject, from, of, asyncScheduler, interval, timer } from 'rxjs';
-import { map, reduce, filter } from 'rxjs/operators';
+import { Observable, Subject, from, of, asyncScheduler, interval, timer, fromEvent } from 'rxjs';
+import { map, reduce, filter, distinct, distinctUntilChanged, distinctUntilKeyChanged, takeUntil, startWith, endWith } from 'rxjs/operators';
 
 const lineaSepardora = "-".repeat(5);
 
@@ -88,7 +88,14 @@ const secuenceNumbers$ = interval(2000);
 //Timer
 //Parametro en milisegundos, ese el tiempo que esperará para ejecutarse
 const delayedTimer$ = timer(5000);
-delayedTimer$.subscribe(console.log)
+
+const observableTimer = {
+    next: (value) => {
+        console.log('->Valor timer', value)
+    }
+}
+
+delayedTimer$.subscribe(observableTimer);
 
 console.log(lineaSepardora + "Operadores pipeables" + lineaSepardora);
 console.log(lineaSepardora + "Map - Filter" + lineaSepardora);
@@ -111,5 +118,54 @@ const numbers3$ = from([1 , 2, 3, 4 , 5, 6, 7 ,8]).pipe(
 numbers3$.subscribe(console.log);
 
 
+console.log(lineaSepardora + "distinct" + lineaSepardora);
+
+const repeatNumbers$ = of(1, 2, 2, 2, 3, 3, 4, 5 ,6).pipe(
+    distinct()
+);
+
+repeatNumbers$.subscribe(console.log)
 
 
+console.log(lineaSepardora + "distinctUntilChanged" + lineaSepardora);
+
+const repeatNumbers1$ = of(1, 2, 2, 2, 3, 3, 4, 5 ,6).pipe(
+    distinctUntilChanged()
+);
+
+repeatNumbers1$.subscribe(console.log)
+
+console.log(lineaSepardora + "distinctUntilKeyChanged" + lineaSepardora);
+
+const repeatNumbers2$ = of({k: 1}, {k:2}, {k:2}, {k:2}, {k:2}, {k:3}, {k:4}, {k:5} ,{k:2}).pipe(
+    distinctUntilChanged()
+);
+
+repeatNumbers1$.subscribe(console.log)
+
+
+console.log(lineaSepardora + "takeUntil" + lineaSepardora);
+
+/*const mousemove$ = fromEvent(document, "mousemove");
+const mousedown$ = fromEvent(document, "mousedown");
+
+mousemove$.pipe(takeUntil(mousedown$)).subscribe(console.log)*/
+
+console.log(lineaSepardora + "startWith" + lineaSepardora);
+//Agrega un valor al inicio
+const letters1$ = of('a', 'b', 'c').pipe(
+    startWith('m')
+)
+
+letters1$.subscribe(console.log)
+
+
+console.log(lineaSepardora + "endWith" + lineaSepardora);
+//Agrega un valor al final 
+
+const letters2$ = of('a', 'b', 'c').pipe(
+    startWith('startWith -> x'),
+    endWith('endWith-> m')
+)
+
+letters2$.subscribe(console.log)
