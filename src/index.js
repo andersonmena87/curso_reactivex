@@ -1,5 +1,7 @@
 import { Observable, Subject, from, of, asyncScheduler, interval, timer, fromEvent } from 'rxjs';
-import { map, reduce, filter, distinct, distinctUntilChanged, distinctUntilKeyChanged, takeUntil, startWith, endWith } from 'rxjs/operators';
+import { ajax } from 'rxjs/ajax';
+import { fromFetch } from 'rxjs/fetch';
+import { map, reduce, filter, distinct, distinctUntilChanged, distinctUntilKeyChanged, takeUntil, startWith, endWith, catchError, retry, mergeMap } from 'rxjs/operators';
 
 const lineaSepardora = "-".repeat(5);
 
@@ -168,4 +170,43 @@ const letters2$ = of('a', 'b', 'c').pipe(
     endWith('endWith-> m')
 )
 
-letters2$.subscribe(console.log)
+letters2$.subscribe(console.log);
+
+console.log(lineaSepardora + "catchError - Retry" + lineaSepardora);
+
+const letters3$ = of("A", "B", "C", "D").pipe(
+    map(letter => {
+        if(letter === "C"){
+            x = 2
+        }
+
+        return letter;
+    }),
+    //retry -> Debe llamarse antes del catchError
+    retry(2),
+    catchError((error) => of("!Ha ocurrido un error: " + error.message))
+)
+
+letters3$.subscribe(console.log)
+
+
+// console.log(lineaSepardora + "AJAX" + lineaSepardora);
+
+// const ditto$ = ajax('https://pokeapi.co/api/v2/pokemon/ditto').pipe(
+//     map(data => data.response),
+//     catchError(error => of(error.message))
+// )
+
+// ditto$.subscribe(console.log);
+
+
+console.log(lineaSepardora + "fromFetch" + lineaSepardora);
+
+const url = 'https://pokeapi.co/api/v2/pokemon/ditto';
+
+const dittoFetch$ = fromFetch(url)
+.pipe(
+    mergeMap(data => data.json())
+);
+
+dittoFetch$.subscribe(console.log)
